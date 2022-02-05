@@ -1,9 +1,7 @@
 import argparse
 import os
-import shutil
 import time
 import logging
-import random
 
 import torch
 import torch.nn.functional as F
@@ -12,13 +10,10 @@ from torch.utils.data import DataLoader
 import torch.optim
 cudnn.benchmark = True
 
-import multicrop
 import numpy as np
 import nibabel as nib
 from medpy import metric
 
-import models
-from models import criterions
 from data import datasets
 from data.data_utils import add_mask
 from utils import Parser
@@ -60,7 +55,8 @@ def main():
     ckpts = args.getdir()
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     # setup networks
-    Network = getattr(models.unet, args.net)
+    Network = getattr(
+        _OTHER.BRATS.models.unet, args.net)
     # model = models.unet.kiunet()
     model = Network(**args.net_params)
     model = model.cuda()
@@ -69,7 +65,8 @@ def main():
     checkpoint = torch.load(model_file)
     model.load_state_dict(checkpoint['state_dict'])
 
-    Dataset = getattr(datasets, args.dataset)
+    Dataset = getattr(
+        datasets, args.dataset)
 
     valid_list = os.path.join(args.data_dir, args.valid_list)
     valid_set = Dataset(valid_list, root=args.data_dir,

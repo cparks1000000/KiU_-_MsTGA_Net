@@ -26,7 +26,7 @@ from functools import partial
 from random import randint
 import timeit
 
-from arch.ae import kiunet,kinetwithsk,Unet,autoencoder, reskiunet,densekiunet, kiunet3d
+from arch.kiunet import KiUNet,kinetwithsk,Unet,autoencoder, ResKiUNet,DenseKiUNet, kiunet3d
 
 def mae(imageA, imageB):
     # the 'Mean Squared Error' between the two images is the
@@ -145,15 +145,15 @@ if modelname == "unet":
 elif modelname =="autoencoder":
     model =autoencoder()
 elif modelname == "kiunet":
-    model = kiunet()
+    model = KiUNet()
 elif modelname == "kinetwithsk":
     model = kinetwithsk()
 elif modelname == "kinet":
     model = kinet()
 elif modelname == "reskiunet":
-    model = reskiunet()
+    model = ResKiUNet()
 elif modelname == "densekiunet":
-    model = densekiunet()
+    model = DenseKiUNet()
 elif modelname == "kiunet3d":
     model = kiunder3d()
 elif modelname == "pspnet":

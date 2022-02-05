@@ -1,19 +1,24 @@
 from collections import OrderedDict
 import math
+from typing import List, Optional
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch import Tensor
 from torch.utils import model_zoo
 from torchvision.models.densenet import densenet121, densenet161
 from torchvision.models.squeezenet import squeezenet1_1
 
+from arch.skip_connection import SkipConnection
 
-def load_weights_sequential(target, source_state):
+
+def load_weights_sequential(target: nn.Module, source_state: dict) -> nn.Module:
     new_dict = OrderedDict()
     for (k1, v1), (k2, v2) in zip(target.state_dict().items(), source_state.items()):
         new_dict[k1] = v2
     target.load_state_dict(new_dict)
+    return target
 
 '''
     Implementation of dilated ResNet-101 with deep supervision. Downsampling is changed to 8x
@@ -26,81 +31,55 @@ model_urls = {
     'resnet152': 'https://download.pytorch.org/models/resnet152-b121ed2d.pth',
 }
 
-
+# noinspection PyTypeChecker
 def conv3x3(in_planes, out_planes, stride=1, dilation=1):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
-                     padding=dilation, dilation=dilation, bias=False)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=dilation, dilation=dilation, bias=False)
 
 
+#todo: BasicBlock and BottleNeck are the same class. Merge them.
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1):
-        super(BasicBlock, self).__init__()
-        self.conv1 = conv3x3(inplanes, planes, stride=stride, dilation=dilation)
-        self.bn1 = nn.BatchNorm2d(planes)
-        self.relu = nn.ReLU(inplace=True)
-        self.conv2 = conv3x3(planes, planes, stride=1, dilation=dilation)
-        self.bn2 = nn.BatchNorm2d(planes)
-        self.downsample = downsample
-        self.stride = stride
+    def __init__(self, in_planes: int, planes: int, stride: int = 1, downsample: Optional[nn.Module] = None, dilation: int = 1) -> None:
+        super().__init__()
+        self._convolution: nn.Module = nn.Sequential(
+            conv3x3(in_planes, planes, stride=stride, dilation=dilation),
+            nn.BatchNorm2d(planes),
+            nn.ReLU(inplace=True),
+            conv3x3(planes, planes, dilation=dilation),
+            nn.BatchNorm2d(planes)
+        )
+        if downsample is not None:
+            self._downsample: nn.Module = downsample
+        else:
+            self._downsample: nn.Module = nn.Identity()
+        self._relu = nn.ReLU()
 
-    def forward(self, x):
-        residual = x
-
-        out = self.conv1(x)
-        out = self.bn1(out)
-        out = self.relu(out)
-
-        out = self.conv2(out)
-        out = self.bn2(out)
-
-        if self.downsample is not None:
-            residual = self.downsample(x)
-
-        out += residual
-        out = self.relu(out)
-
-        return out
+    def forward(self, x: Tensor) -> Tensor:
+        return self._relu( self._downsample(x) + self._convolution(x) )
 
 
 class Bottleneck(nn.Module):
     expansion = 4
-
-    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1):
+    def __init__(self, in_planes: int, planes: int, stride: int = 1, downsample=None, dilation=1):
         super(Bottleneck, self).__init__()
-        self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride, dilation=dilation,
-                               padding=dilation, bias=False)
-        self.bn2 = nn.BatchNorm2d(planes)
-        self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
-        self.bn3 = nn.BatchNorm2d(planes * 4)
-        self.relu = nn.ReLU(inplace=True)
-        self.downsample = downsample
+        self._convolution: nn.Module = nn.Sequential(
+            nn.Conv2d(in_planes, planes, kernel_size=(1, 1), bias=False),
+            nn.BatchNorm2d(planes),
+            nn.Conv2d(planes, planes, kernel_size=(3, 3), stride=(stride, stride), dilation=(dilation, dilation), padding=dilation, bias=False),
+            nn.BatchNorm2d(planes),
+            nn.Conv2d(planes, planes * 4, kernel_size=(1, 1), bias=False),
+            nn.BatchNorm2d(planes * 4),
+            nn.ReLU(inplace=True)
+        )
+        if downsample is not None:
+            self._downsample: nn.Module = downsample
+        else:
+            self._downsample: nn.Module = nn.Identity()
         self.stride = stride
 
     def forward(self, x):
-        residual = x
-
-        out = self.conv1(x)
-        out = self.bn1(out)
-        out = self.relu(out)
-
-        out = self.conv2(out)
-        out = self.bn2(out)
-        out = self.relu(out)
-
-        out = self.conv3(out)
-        out = self.bn3(out)
-
-        if self.downsample is not None:
-            residual = self.downsample(x)
-
-        out += residual
-        out = self.relu(out)
-
-        return out
+        return self._relu( self._downsample(x) + self._convolution(x) )
 
 
 class ResNet(nn.Module):
@@ -161,36 +140,32 @@ class ResNet(nn.Module):
 
 
 class _DenseLayer(nn.Sequential):
-    def __init__(self, num_input_features, growth_rate, bn_size, drop_rate, index):
-        super(_DenseLayer, self).__init__()
-        self.add_module('norm1', nn.BatchNorm2d(num_input_features)),
-        self.add_module('relu1', nn.ReLU(inplace=True)),
+    def __init__(self, features_in: int, growth_rate: int, bn_size: int, drop_rate: int, index: int) -> None:
+        super().__init__()
+        named_layers: OrderedDict[str, nn.Module] = OrderedDict()
+        named_layers['norm1'] = nn.BatchNorm2d(features_in)
+        named_layers['relu1'] = nn.ReLU(inplace=True)
+        named_layers['conv1'] = nn.Conv2d(features_in, bn_size * growth_rate, kernel_size=(1, 1), bias=False)
+        named_layers['norm2'] = nn.BatchNorm2d(bn_size * growth_rate)
+        named_layers['relu2'] = nn.ReLU(inplace=True)
+        dialation: int = 1
         if index == 3:
-            self.add_module('conv1', nn.Conv2d(num_input_features, bn_size *
-                                                growth_rate, kernel_size=1, stride=1, bias=False)),
-            self.add_module('norm2', nn.BatchNorm2d(bn_size * growth_rate)),
-            self.add_module('relu2', nn.ReLU(inplace=True)),
-            self.add_module('conv2', nn.Conv2d(bn_size * growth_rate, growth_rate,
-                                                kernel_size=3, stride=1, dilation=2, padding=2, bias=False)),
-        else:
-            self.add_module('conv1', nn.Conv2d(num_input_features, bn_size *
-                                            growth_rate, kernel_size=1, stride=1, bias=False)),
-            self.add_module('norm2', nn.BatchNorm2d(bn_size * growth_rate)),
-            self.add_module('relu2', nn.ReLU(inplace=True)),
-            self.add_module('conv2', nn.Conv2d(bn_size * growth_rate, growth_rate,
-                                            kernel_size=3, stride=1, padding=1, bias=False)),
+            dialation = 2
+        # noinspection PyTypeChecker
+        named_layers['conv2'] = nn.Conv2d(bn_size * growth_rate, growth_rate, kernel_size=(3, 3), dilation=dialation, padding=dialation, bias=False)
+        self._model = nn.Sequential(named_layers)
         self.drop_rate = drop_rate
 
-    def forward(self, x):
-        new_features = super(_DenseLayer, self).forward(x)
+    def forward(self, x: Tensor) -> Tensor:
+        new_features = self._model(x)
         if self.drop_rate > 0:
             new_features = F.dropout(new_features, p=self.drop_rate, training=self.training)
-        return torch.cat([x, new_features], 1)
+        return torch.cat([x, new_features], dim=1)
 
 
 class _DenseBlock(nn.Sequential):
     def __init__(self, num_layers, num_input_features, bn_size, growth_rate, drop_rate, index):
-        super(_DenseBlock, self).__init__()
+        super().__init__()
         for i in range(num_layers):
             layer = _DenseLayer(num_input_features + i * growth_rate, growth_rate, bn_size, drop_rate, index)
             self.add_module('denselayer%d' % (i + 1), layer)
@@ -198,7 +173,7 @@ class _DenseBlock(nn.Sequential):
 
 class _Transition(nn.Sequential):
     def __init__(self, num_input_features, num_output_features, downsample=True):
-        super(_Transition, self).__init__()
+        super().__init__()
         self.add_module('norm', nn.BatchNorm2d(num_input_features))
         self.add_module('relu', nn.ReLU(inplace=True))
         self.add_module('conv', nn.Conv2d(num_input_features, num_output_features,
@@ -213,7 +188,7 @@ class DenseNet(nn.Module):
     def __init__(self, growth_rate=8, block_config=(6, 12, 24, 16),
                  num_init_features=16, bn_size=4, drop_rate=0, pretrained=False):
 
-        super(DenseNet, self).__init__()
+        super().__init__()
 
         # First convolution
         self.start_features = nn.Sequential(OrderedDict([
@@ -269,7 +244,7 @@ class Fire(nn.Module):
 
     def __init__(self, inplanes, squeeze_planes,
                  expand1x1_planes, expand3x3_planes, dilation=1):
-        super(Fire, self).__init__()
+        super().__init__()
         self.inplanes = inplanes
         self.squeeze = nn.Conv2d(inplanes, squeeze_planes, kernel_size=1)
         self.squeeze_activation = nn.ReLU(inplace=True)
@@ -291,7 +266,7 @@ class Fire(nn.Module):
 class SqueezeNet(nn.Module):
 
     def __init__(self, pretrained=False):
-        super(SqueezeNet, self).__init__()
+        super().__init__()
 
         self.feat_1 = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1),

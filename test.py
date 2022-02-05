@@ -18,7 +18,7 @@ import numpy as np
 from torchvision.utils import save_image
 import torch
 import torch.nn.init as init
-from arch.ae import kiunet,kinetwithsk,Unet,autoencoder
+from arch.kiunet import KiUNet,kinetwithsk,Unet,autoencoder
 from utils import JointTransform2D, ImageToImage2D, Image2D
 from metrics import jaccard_index, f1_score, LogNLLLoss,classwise_f1
 from utils import chk_mkdir, Logger, MetricList
@@ -98,7 +98,7 @@ if modelname == "unet":
 elif modelname =="autoencoder":
     model =autoencoder()
 elif modelname == "kiunet":
-    model = kiunet()
+    model = KiUNet()
 elif modelname == "kinetwithsk":
     model = kinetwithsk()
 elif modelname == "kinet":

@@ -1,20 +1,20 @@
 import argparse
 import os
-import shutil
 import time
 import logging
 import random
 
 import torch
-import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
 import torch.optim
 from torch.utils.data import DataLoader
+
+from arch.kiunet import KiUNet
+
 cudnn.benchmark = True
 
 import numpy as np
 
-import models
 from models import criterions
 from data import datasets
 from data.sampler import CycleSampler
@@ -54,15 +54,16 @@ def main():
     random.seed(args.seed)
     np.random.seed(args.seed)
 
-    # setup networks
-    # Network = getattr(models, args.net)
-    # model = Network(**args.net_params)
-    model = models.unet.kiunet()
+
+    # todo: Add parameters here.
+    model = KiUNet()
     model = model.cuda()
 
+    # Never use getattr!!!
     optimizer = getattr(torch.optim, args.opt)(
             model.parameters(), **args.opt_params)
-    criterion = getattr(criterions, args.criterion)
+    criterion = getattr(
+        criterions, args.criterion)
 
     msg = ''
     # optionally resume from a checkpoint
@@ -84,7 +85,8 @@ def main():
     logging.info(msg)
 
     # Data loading code
-    Dataset = getattr(datasets, args.dataset)
+    Dataset = getattr(
+        datasets, args.dataset)
 
     train_list = os.path.join(args.data_dir, args.train_list)
     train_set = Dataset(train_list, root=args.data_dir, for_train=True,
