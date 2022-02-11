@@ -35,7 +35,7 @@ class BaseKiUNet(nn.Module):
         up_scales = [None] + up_scales
 
         # todo: Make this smarter
-        # A skip module records its first input and returns it. A skip module returns the sum of its second input and its record
+        # On its first use, a skip module records its input and returns it. On its second use, a skip module returns the sum of its input and its previous record. A skip module can not be used a third time.
         if has_skips:
             skips: List[Parallel] = [skip_parallel() for _ in range(len(channels) - 2)] + [identity]  # don't add a skip at the end
         else:
@@ -251,8 +251,6 @@ class kiunet3d(nn.Module):
 
         out = F.relu(F.interpolate(self.decoder3(out),scale_factor=2,mode ='trilinear'))
         out1 = F.relu(F.max_pool3d(self.kdecoder3(out1),2,2))
-
-
 
         out = torch.add(out,out1) # fusion of both branches
 
