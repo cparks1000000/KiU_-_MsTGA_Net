@@ -40,6 +40,7 @@ class Merger(nn.Module):
 			encoder_sampling=downsample_factory,
 			decoder_sampling=upsample_factory
 		)
+
 		k = Template(
 			channels_in, number_of_classes, height, width,
 			channels_list=channels_list,
@@ -57,23 +58,22 @@ class Merger(nn.Module):
 		self.final: Parallel = Parallel(u.final_block, k.final_block)
 		self.sum: Sum = Sum()
 
-		# todo: Make this by generalizing the MFRB module from KiUNet.
-		self.encoder_cross_overs: nn.ModuleList = nn.ModuleList()
-		self.decoder_cross_overs: nn.ModuleList = nn.ModuleList()
+		self.encoder_crossing: nn.ModuleList = nn.ModuleList()
+		self.decoder_crossing: nn.ModuleList = nn.ModuleList()
 		for channels, upscale in zip(channels_list, upscales):
-			self.encoder_cross_overs.append(CrossOver(channels, upscale))
-			self.decoder_cross_overs.append(CrossOver(channels, upscale))
-		self.decoder_cross_overs = self.decoder_cross_overs[::-1]
+			self.encoder_crossing.append(CrossOver(channels, upscale))
+			self.decoder_crossing.append(CrossOver(channels, upscale))
+		self.decoder_crossing = self.decoder_crossing[::-1]
 
 	def forward(self, x: Tensor) -> Tensor:
 		x = self.split(x)
 		x = self.initial(x)
-		for skip, cross_over, block in zip(self.skips, self.encoder_cross_overs, self.encoders):
+		for skip, cross_over, block in zip(self.skips, self.encoder_crossing, self.encoders):
 			x = skip(x)
 			x = cross_over(x)
 			x = block(x)
 		x = self.transformer(x)
-		for block, cross_over, skip in zip(self.decoders, self.decoder_cross_overs, self.skips):
+		for block, cross_over, skip in zip(self.decoders, self.decoder_crossing, self.skips):
 			x = block(x)
 			x = cross_over(x)
 			x = skip(x)
