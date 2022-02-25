@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from MsGCS import MsGCS as MsM
+from MsGCS import MsGCS
 from Ki_MsTNL import MsTNL
 
 
@@ -26,7 +26,7 @@ class up_conv(nn.Module):
         super(up_conv, self).__init__()
         self.up = nn.Sequential(
             nn.Upsample(scale_factor=2),
-            nn.Conv2d(ch_in, ch_out, kernel_size=3, stride=1, padding=1, bias=True),
+            nn.Conv2d(ch_in, ch_out, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(ch_out),
             nn.ReLU(inplace=True)
         )
@@ -70,16 +70,20 @@ class MsTGANet(nn.Module):
         self.Maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
 
         self.Conv5 = conv_block(ch_in=filters[4], ch_out=filters[3])
-        self.Att5 = MsM(F_g=filters[3], F_l=filters[3], F_int=filters[2], size=(512, 512))
+        self.Att5 = MsGCS(
+            decoder_channels_in=filters[3], encoder_channels_in=filters[3], channels_out=filters[2], height=512, width=512)
 
         self.Conv4 = conv_block(ch_in=filters[3], ch_out=filters[2])
-        self.Att4 = MsM(F_g=filters[2], F_l=filters[2], F_int=filters[1], size=(256, 256))
+        self.Att4 = MsGCS(
+            decoder_channels_in=filters[2], encoder_channels_in=filters[2], channels_out=filters[1], height=256, width=256)
 
         self.Conv3 = conv_block(ch_in=filters[2], ch_out=filters[1])
-        self.Att3 = MsM(F_g=filters[1], F_l=filters[1], F_int=filters[0], size=(128, 128))
+        self.Att3 = MsGCS(
+            decoder_channels_in=filters[1], encoder_channels_in=filters[1], channels_out=filters[0], height=128, width=128)
 
         self.Conv2 = conv_block(ch_in=filters[1], ch_out=filters[0])
-        self.Att2 = MsM(F_g=filters[0], F_l=filters[0], F_int=filters[0] // 2, size=(64, 64))
+        self.Att2 = MsGCS(
+            decoder_channels_in=filters[0], encoder_channels_in=filters[0], channels_out=filters[0] // 2, height=64, width=64)
 
         # Final Layer
         # Same final layer as U-MsTGANet

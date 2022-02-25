@@ -2,9 +2,9 @@ from typing import List
 
 from torch import nn
 
-from arch.interpolate import Interpolate
-from arch.parallel import Split, Parallel, Sum
-from arch.skip_connection import DenseSkip
+from KiUNet.arch.interpolate import Interpolate
+from KiUNet.arch.parallel import Split, Parallel, Sum
+from KiUNet.arch.skip_connection import DenseSkip
 
 
 def create_base_downsample(channels_in: int, channels_out: int) -> List[nn.Module]:

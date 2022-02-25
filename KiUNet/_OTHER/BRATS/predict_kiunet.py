@@ -16,7 +16,7 @@ from medpy import metric
 
 from data import datasets
 from data.data_utils import add_mask
-from utils import Parser
+from KiUNet.utils import Parser
 
 path = os.path.dirname(__file__)
 
@@ -66,7 +66,7 @@ def main():
     model.load_state_dict(checkpoint['state_dict'])
 
     Dataset = getattr(
-        datasets, args.dataset)
+			datasets, args.dataset)
 
     valid_list = os.path.join(args.data_dir, args.valid_list)
     valid_set = Dataset(valid_list, root=args.data_dir,

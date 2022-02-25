@@ -2,8 +2,8 @@ from typing import List
 
 from torch import Tensor, nn
 
-from arch.kiunet import create_base_upsample, create_base_downsample
-from arch.skip_connection import SkipConnection
+from KiUNet.arch.kiunet import create_base_upsample, create_base_downsample
+from KiUNet.arch.skip_connection import SkipConnection
 
 
 class kinetwithsk(nn.Module):

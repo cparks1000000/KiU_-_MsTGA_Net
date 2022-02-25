@@ -2,8 +2,7 @@ import pickle
 import os
 import numpy as np
 import nibabel as nib
-from utils import Parser
-import time
+from KiUNet.utils import Parser
 
 args = Parser()
 

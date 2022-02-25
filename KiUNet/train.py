@@ -16,7 +16,7 @@ import cv2
 from functools import partial
 from random import randint
 
-from arch.kiunet import KiUNet, kinetwithsk, Unet, autoencoder, ResKiUNet,DenseKiUNet
+from KiUNet.arch.kiunet import KiUNet, kinetwithsk, Unet, autoencoder, ResKiUNet,DenseKiUNet
 
 def mae(imageA, imageB):
     # the 'Mean Squared Error' between the two images is the

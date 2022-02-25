@@ -1,15 +1,15 @@
 from __future__ import annotations
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional
 
 import torch
 from torch import nn, Tensor
 import torch.nn.functional as F
 
-from arch.mfrb import MFRB
-from arch.parallel import Parallel, Split, Sum
-from arch.skip_connection import SkipConnection
-from arch.util import create_base_upsample, create_base_downsample, create_resnet_downsample, create_resnet_upsample, create_dense_downsample, create_dense_upsample
-from util.typing import ModuleFactory
+from KiUNet.arch.mfrb import MFRB
+from KiUNet.arch.parallel import Parallel, Split, Sum
+from KiUNet.arch.skip_connection import SkipConnection
+from KiUNet.arch.util import create_base_upsample, create_base_downsample, create_resnet_downsample, create_resnet_upsample, create_dense_downsample, create_dense_upsample
+from KiUNet.arch.util import ModuleFactory
 
 
 def skip_parallel() -> Parallel:

@@ -2,8 +2,8 @@ from typing import List
 
 from torch import nn, Tensor
 
-from arch.skip_connection import SkipConnection
-from arch.util import create_base_downsample, create_base_upsample
+from KiUNet.arch.skip_connection import SkipConnection
+from KiUNet.arch.util import create_base_downsample, create_base_upsample
 
 
 # todo: this is a Unet without skips. Refactor this.

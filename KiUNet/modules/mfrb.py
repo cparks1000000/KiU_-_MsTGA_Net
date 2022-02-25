@@ -2,7 +2,7 @@ from torch import \
 	nn, \
 	Tensor
 
-from arch.interpolate import Interpolate
+from KiUNet.modules.interpolate import Interpolate
 
 
 class MFRB(nn.Module):

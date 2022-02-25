@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from MsGCS import MsGCS as MsM
+from MsGCS import MsGCS
 from U_MsTNL import MsTNL
 
 
@@ -8,10 +8,10 @@ class conv_block(nn.Module):
     def __init__(self, ch_in, ch_out):
         super(conv_block, self).__init__()
         self.conv = nn.Sequential(
-            nn.Conv2d(ch_in, ch_out, kernel_size=3, stride=1, padding=1, bias=True),
+            nn.Conv2d(ch_in, ch_out, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(ch_out),
             nn.ReLU(inplace=True),
-            nn.Conv2d(ch_out, ch_out, kernel_size=3, stride=1, padding=1, bias=True),
+            nn.Conv2d(ch_out, ch_out, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(ch_out),
             nn.ReLU(inplace=True)
         )
@@ -26,7 +26,7 @@ class up_conv(nn.Module):
         super(up_conv, self).__init__()
         self.up = nn.Sequential(
             nn.Upsample(scale_factor=2),
-            nn.Conv2d(ch_in, ch_out, kernel_size=3, stride=1, padding=1, bias=True),
+            nn.Conv2d(ch_in, ch_out, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(ch_out),
             nn.ReLU(inplace=True)
         )
@@ -54,19 +54,19 @@ class MsTGANet(nn.Module):
         self.trans = MsTNL(train_dim=512, filters=filters)
 
         self.Up5 = up_conv(ch_in=filters[4], ch_out=filters[3])
-        self.Att5 = MsM(F_g=filters[3], F_l=filters[3], F_int=filters[2], size=(64, 64))
+        self.Att5 = MsGCS(decoder_channels_in=filters[3], encoder_channels_in=filters[3], channels_out=filters[2], width=64, height=64)
         self.Up_conv5 = conv_block(ch_in=filters[4], ch_out=filters[3])
 
         self.Up4 = up_conv(ch_in=filters[3], ch_out=filters[2])
-        self.Att4 = MsM(F_g=filters[2], F_l=filters[2], F_int=filters[1], size=(128, 128))
+        self.Att4 = MsGCS(decoder_channels_in=filters[2], encoder_channels_in=filters[2], channels_out=filters[1], width=128, height=128)
         self.Up_conv4 = conv_block(ch_in=filters[3], ch_out=filters[2])
 
         self.Up3 = up_conv(ch_in=filters[2], ch_out=filters[1])
-        self.Att3 = MsM(F_g=filters[1], F_l=filters[1], F_int=filters[0], size=(256, 256))
+        self.Att3 = MsGCS(decoder_channels_in=filters[1], encoder_channels_in=filters[1], channels_out=filters[0],  width=265, height=256)
         self.Up_conv3 = conv_block(ch_in=filters[2], ch_out=filters[1])
 
         self.Up2 = up_conv(ch_in=filters[1], ch_out=filters[0])
-        self.Att2 = MsM(F_g=filters[0], F_l=filters[0], F_int=filters[0] // 2, size=(512, 512))
+        self.Att2 = MsGCS(decoder_channels_in=filters[0], encoder_channels_in=filters[0], channels_out=filters[0] // 2, width=512, height=512)
         self.Up_conv2 = conv_block(ch_in=filters[1], ch_out=filters[0])
 
         self.Conv_1x1 = nn.Conv2d(filters[0], num_classes, kernel_size=1, stride=1, padding=0)

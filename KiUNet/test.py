@@ -1,31 +1,16 @@
 # Code for KiU-Net
 # Author: Jeya Maria Jose
 import argparse
-import torch
-import torchvision
-from torch import nn
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-from torchvision import transforms
-from torchvision.utils import save_image
-from torchvision.datasets import MNIST
-import torch.nn.functional as F
 import os
-import matplotlib.pyplot as plt
-import torch.utils.data as data
-from PIL import Image
-import numpy as np
-from torchvision.utils import save_image
 import torch
-import torch.nn.init as init
-from arch.kiunet import KiUNet,kinetwithsk,Unet,autoencoder
+from KiUNet.arch.kiunet import KiUNet,kinetwithsk,Unet,autoencoder
 from utils import JointTransform2D, ImageToImage2D, Image2D
-from metrics import jaccard_index, f1_score, LogNLLLoss,classwise_f1
-from utils import chk_mkdir, Logger, MetricList
+from metrics import jaccard_index, f1_score, LogNLLLoss
+from utils import MetricList
 import cv2
 from functools import partial
-from random import randint
-
 
 parser = argparse.ArgumentParser(description='KiU-Net')
 parser.add_argument('-j', '--workers', default=16, type=int, metavar='N',

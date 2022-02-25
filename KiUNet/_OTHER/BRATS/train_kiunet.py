@@ -9,7 +9,7 @@ import torch.backends.cudnn as cudnn
 import torch.optim
 from torch.utils.data import DataLoader
 
-from arch.kiunet import KiUNet
+from KiUNet.arch.kiunet import KiUNet
 
 cudnn.benchmark = True
 
@@ -19,7 +19,7 @@ from models import criterions
 from data import datasets
 from data.sampler import CycleSampler
 from data.data_utils import add_mask, init_fn
-from utils import Parser
+from KiUNet.utils import Parser
 
 from predict_unet import validate, AverageMeter
 
@@ -63,7 +63,7 @@ def main():
     optimizer = getattr(torch.optim, args.opt)(
             model.parameters(), **args.opt_params)
     criterion = getattr(
-        criterions, args.criterion)
+            criterions, args.criterion)
 
     msg = ''
     # optionally resume from a checkpoint
@@ -86,7 +86,7 @@ def main():
 
     # Data loading code
     Dataset = getattr(
-        datasets, args.dataset)
+            datasets, args.dataset)
 
     train_list = os.path.join(args.data_dir, args.train_list)
     train_set = Dataset(train_list, root=args.data_dir, for_train=True,

@@ -127,7 +127,8 @@ class ImageToImage2D(Dataset):
 
     def __init__(self, dataset_path: str, joint_transform: Callable = None, one_hot_mask: int = False) -> None:
         self.dataset_path = dataset_path
-        self.input_path = os.path.join(dataset_path, 'img')
+        self.input_path = os.path.join(dataset_path,
+                                       'img')
         self.output_path = os.path.join(dataset_path, 'label')
         self.images_list = os.listdir(self.input_path)
         self.one_hot_mask = one_hot_mask
@@ -201,7 +202,8 @@ class Image2D(Dataset):
     def __init__(self, dataset_path: str, transform: Callable = None):
 
         self.dataset_path = dataset_path
-        self.input_path = os.path.join(dataset_path, 'img')
+        self.input_path = os.path.join(dataset_path,
+                                       'img')
         self.images_list = os.listdir(self.input_path)
 
         if transform:
