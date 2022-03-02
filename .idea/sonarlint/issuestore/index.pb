@@ -153,3 +153,31 @@ O
 KiUNet/_OTHER/LiTS/parameter.py,d\4\d4f175efde3ca70af30ba7bc87934ff652bcb4de
 K
 MsTGANet/merger/__init__.py,4\7\4703591270cefbc248ccd6af1de34e619c6bbe18
+J
+KiUNet/modules/parallel.py,c\2\c25f72fd332a41d5ae4d73cc7152e3ee691addfe
+L
+MsTGANet/modules/parallel.py,d\4\d4635e968a6a886a179624f69fe119db3c024a44
+T
+$MsTGANet/modules/sampling_factory.py,3\7\375fbe8058bd3e1ba29b80055316c1e42068783b
+N
+MsTGANet/template/attention.py,4\c\4c0514c7356c12b0e76c4a366d988754ba584434
+L
+MsTGANet/modules/sampling.py,f\3\f32ad8dba4e47f78dccf9245342ce2fc0a29c2ea
+O
+MsTGANet/modules/up_sampling.py,f\e\fe814f78a490653666031e68a3878d2297cc51c0
+G
+MsTGANet/Ki_MsTGANet.py,d\4\d40416ba9e94fb6698c0263fe82c201ecf0b6a9d
+M
+MsTGANet/template/template.py,8\8\881e28399cb49de32c2cdf447c5e27486a420524
+P
+ MsTGANet/modules/convolutions.py,c\c\ccf86748d0ce9982ff1047db4f17b8082aa8d988
+N
+MsTGANet/modules/cross_over.py,6\a\6a3184a87a4644a82f4d41438da00819caf84e37
+I
+MsTGANet/merger/merger.py,3\3\3330be43f56ce7fca5cfa40288d40d23c91d1c02
+F
+KiUNet/modules/mfrb.py,e\c\ec7593e7f74bac5704fab351871474840ba4202d
+H
+KiUNet/modules/kiunet.py,d\7\d72f63eb77bbd4ca1ed7233927210aedaaa1de11
+Q
+!KiUNet/modules/skip_connection.py,d\d\ddff7e943d024c8a1c20eb95a5fa732b62121bae
