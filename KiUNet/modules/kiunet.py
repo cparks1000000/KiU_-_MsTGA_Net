@@ -62,9 +62,13 @@ class BaseKiUNet(nn.Module):
             modules.append(nn.Softmax(dim=1))
 
         self._calculate = nn.Sequential(*modules)
+        self._skips = skips
 
     def forward(self, x: Tensor) -> Tensor:
-        return self._calculate(x)
+        output = self._calculate(x)
+        for skip in self._skips:
+            skip.reset()
+        return output
 
 
 # skip is expected to be two parallel skip connections
