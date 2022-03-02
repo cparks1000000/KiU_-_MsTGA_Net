@@ -12,19 +12,19 @@ class SkipConnection(nn.Module):
 	def __init__(self) -> None:
 		super().__init__()
 		self._storage: Optional[Tensor] = None
-		self._save: bool = True
-		self._dead: bool = False
+		self._uses: int = 0
 
 	def forward(self, x: Tensor):
-		if self._dead:
-			raise SkipMisuseException
-		if self._save:
-			self._save = False
+		self._uses += 1
+		if self._uses == 1:
 			self._storage = x
 			return x
-		else:
-			self._dead = True
+		if self._uses == 2:
 			return x + self._storage
+		raise SkipMisuseException
+
+	def reset(self) -> None:
+		self._uses = 0
 
 
 class DenseSkip(nn.Module):

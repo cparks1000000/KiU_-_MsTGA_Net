@@ -5,7 +5,7 @@ from torch import Tensor, cat
 from MsTGANet.modules.convolutions import SkipConvolution, FeatureConvolution
 
 
-#I don't think the middle_channels was that important, so I replaced it with total_channels_in // 4.
+# I don't think the middle_channels was that important, so I replaced it with total_channels_in // 4.
 # That's what it was in their implementations.
 class SkipModule(nn.Module):
     _saved: Tensor
@@ -30,16 +30,15 @@ class SkipModule(nn.Module):
         )
         self._normalize_channels: nn.Module = FeatureConvolution(total_channels_in, channels_out)
 
-        self._uses = 0
+        self._uses: int = 0
 
     def forward(self, inputs: Tensor):
-        assert self._uses == 0 or self._uses == 1, "You tried to use a skip module twice."
-        if self._uses == 0:
-            self._uses += 1
+        self._uses += 1
+        assert self._uses == 1 or self._uses == 2, "You tried to use a skip module twice."
+        if self._uses == 1:
             self._saved = inputs
             return inputs
         else:
-            self._uses += 1
             combined_data = self._fusion(torch.cat([inputs, self._saved], dim=1))
             heat_map = self.height_tensor + self.width_tensor
             attention = self._activation(heat_map * combined_data)
@@ -47,7 +46,7 @@ class SkipModule(nn.Module):
             return self._normalize_channels(cat([inputs, attended_encoder_data]))
 
     def get_saved(self) -> Tensor:
-        assert self._uses == 0 or self._uses == 1, "You tried to use a skip module twice."
+        assert self._uses == 1 or self._uses == 2, "You tried to use a skip module twice."
         assert self._uses == 1, "You haven't saved anything yet."
         return self._saved
 
