@@ -30,7 +30,7 @@ class Template(nn.Module):
         self.skip_modules: nn.ModuleList = nn.ModuleList()
         self.encoder_blocks: nn.ModuleList = nn.ModuleList()
         for channels_in, channels_out in zip(channels_list, channels_list[1:]):
-            self._skip_modules.append(SimpleSkipModule(channels_in, width, height))
+            self.skip_modules.append(SimpleSkipModule(channels_in, width, height))
             self.encoder_blocks.append( nn.Sequential(
                     encoder_sampling.get(),
                     ConvolutionBlock(channels_in, channels_out)
@@ -45,7 +45,7 @@ class Template(nn.Module):
         channels_list.reverse()
         self.decoder_blocks = nn.ModuleList()
         for channels_in, channels_out in zip(channels_list, channels_list[1:]):
-            self.decoder_blocks.append( nn.Sequential(
+            self.decoder_blocks.append(nn.Sequential(
                 decoder_sampling.get(),
                 ConvolutionBlock(channels_in, channels_out)
             ))

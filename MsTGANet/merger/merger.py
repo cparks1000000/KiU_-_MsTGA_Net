@@ -19,13 +19,7 @@ def form_parallel_list(left_list: nn.ModuleList, right_list: nn.ModuleList) -> n
 
 class Merger(nn.Module):
 	# noinspection PyDefaultArgument
-	def __init__(self,
-				 channels_in: int,
-				 number_of_classes: int,
-				 height: int,
-				 width: int,
-				 *,
-				 channels_list: List[int] = [32, 64, 128, 256, 512]) -> None:
+	def __init__(self, channels_in: int, number_of_classes: int, height: int, width: int, *, channels_list: List[int] = [32, 64, 128, 256, 512]) -> None:
 		super().__init__()
 		upsample_factory = DefaultUpsampleFactory()
 		downsample_factory = DefaultDownsampleFactory()
