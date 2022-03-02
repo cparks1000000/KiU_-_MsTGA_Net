@@ -64,10 +64,9 @@ class BaseKiUNet(nn.Module):
         self._calculate = nn.Sequential(*modules)
         self._skips = skips
 
-    def forward(self, x: Tensor) -> Tensor:
-        output = self._calculate(x)
-        for skip in self._skips:
-            skip.reset()
+    def forward(self, inputs: Tensor) -> Tensor:
+        output = self._calculate(inputs)
+        map(lambda x: x.reset(), self._skips)
         return output
 
 

@@ -37,10 +37,13 @@ class kinetwithsk(nn.Module):
         if has_softmax:
             modules.append(nn.Softmax(dim=1))
 
+        self._skips = skips
         self._calculate = nn.Sequential(*modules)
 
-    def forward(self, x: Tensor) -> Tensor:
-        return self._calculate(x)
+    def forward(self, inputs: Tensor) -> Tensor:
+        output = self._calculate(inputs)
+        map(lambda x: x.reset(), self._skips)
+        return output
 
 
 class kitenet(kinetwithsk):
