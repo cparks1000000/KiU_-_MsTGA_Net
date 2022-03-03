@@ -34,8 +34,10 @@ class TemplateNetwork(nn.Module):
                 test_set, batch_size=1, shuffle=True, num_workers=opt.dataloader_threads
         )
         self._opt = opt
+        self.to(opt.device)
 
     def do_train(self) -> None:
+        self.train()
         for epoch_number in range(1, self._opt.number_of_epochs + 1):
             self._do_epoch(epoch_number)
         self._model.save()
@@ -63,6 +65,7 @@ class TemplateNetwork(nn.Module):
 
     # todo: Calculate the Ppmcc from MsTGANet?
     def do_test(self, load: bool = False):
+        self.eval()
         if load:
             self._model.load()
 
