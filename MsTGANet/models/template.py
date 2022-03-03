@@ -6,18 +6,18 @@ import torch.nn as nn
 from torch import Tensor
 
 from MsTGANet.modules.convolutions import ConvolutionBlock
-from MsTGANet.template.attention import Attention
+from MsTGANet.modules.attention import Attention
 from MsTGANet.modules.sampling_factory import SamplingFactory, DefaultDownsampleFactory, DefaultUpsampleFactory
-from MsTGANet.template.skip_module import SimpleSkipModule
+from MsTGANet.modules.skip_module import SimpleSkipModule
 
 
 class Template(nn.Module):
     # noinspection PyDefaultArgument
     def __init__(self,
                  channels_in: int,
-                 number_of_classes: int,
                  height: int,
                  width: int,
+                 number_of_classes: int,
                  encoder_sampling: SamplingFactory = DefaultDownsampleFactory(),
                  decoder_sampling: SamplingFactory = DefaultUpsampleFactory(),
                  *,
@@ -34,7 +34,7 @@ class Template(nn.Module):
             self.encoder_blocks.append( nn.Sequential(
                     encoder_sampling.get(),
                     ConvolutionBlock(channels_in, channels_out)
-            ))
+           ))
             # todo: Can we work around this problem?
             assert encoder_sampling.scale_int(width) == encoder_sampling.scale(width), "This resolution is not supported yet."
             width = encoder_sampling.scale_int(width)
@@ -54,7 +54,6 @@ class Template(nn.Module):
             width = decoder_sampling.scale_int(width)
             assert decoder_sampling.scale_int(height) == decoder_sampling.scale(height), "This resolution is not supported yet."
             height = decoder_sampling.scale_int(height)
-
 
         self.final_block = nn.Sequential(
             nn.Conv2d(channels_list[0], number_of_classes, kernel_size=1),

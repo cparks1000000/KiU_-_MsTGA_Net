@@ -3,8 +3,6 @@
 ..idea/inspectionProfiles/profiles_settings.xml,1\e\1e9075f5bf079c01ef2c910709e91a497d262080
 \
 ,.idea/inspectionProfiles/Project_Default.xml,4\9\496a238a6afa168dbaf6efd37bb459331589579c
-L
-.idea/codeStyles/Project.xml,6\e\6ecd6000a7b6f4a2884412ff19f74193ed089648
 T
 $.idea/codeStyles/codeStyleConfig.xml,d\d\dd7b3350c29c49497756c7f32c69a3bed18b1cba
 D
@@ -65,8 +63,6 @@ T
 $KiUNet/_OTHER/BRATS/compress_data.py,e\7\e7fa4e2177c597d89e8941aac6a4003a56c3957b
 >
 KiUNet/LICENSE,4\e\4e33a394d1f98b2e8f9b3f12d27da3aca56de731
-A
-KiUNet/metrics.py,1\0\105613ffe8f30964a22bdfe5e1c9d95c29cc2c63
 ?
 KiUNet/utils.py,6\e\6e20a21f71b6f927b99019e20b78e7e300501673
 >
@@ -79,18 +75,12 @@ M
 KiUNet/modules/interpolate.py,c\2\c2d2149c51a82b31215c41f0944541a9106a15b3
 K
 KiUNet/performancemetrics.m,0\6\06552befd9a8b12cfbda99f398a746efff76380d
-?
-KiUNet/train.py,1\a\1af96c9ab4d8a9babd2eb8d2f36face1a1f67b25
 E
 KiUNet/util/typing.py,e\e\ee1040c94f103ee926e0d51e621f1bff24ca1d7d
 G
 KiUNet/util/__init__.py,9\8\98723c46270ffa9d39498eaf3619299907a3182d
 F
-KiUNet/modules/unet.py,2\4\24e36154047041da79440d3ef8b76fa030d28441
-F
 KiUNet/modules/util.py,0\e\0e8870038fa3b0c02b7c21669f7d77f707ff6e98
-G
-KiUNet/modules/kinet.py,6\7\6770b02777ec074d3de8804345a7ade71ace98b3
 B
 KiUNet/__init__.py,a\7\a72f0715a148ab442e033a9790e83b2713eb6664
 J
@@ -153,31 +143,9 @@ O
 KiUNet/_OTHER/LiTS/parameter.py,d\4\d4f175efde3ca70af30ba7bc87934ff652bcb4de
 K
 MsTGANet/merger/__init__.py,4\7\4703591270cefbc248ccd6af1de34e619c6bbe18
-J
-KiUNet/modules/parallel.py,c\2\c25f72fd332a41d5ae4d73cc7152e3ee691addfe
-L
-MsTGANet/modules/parallel.py,d\4\d4635e968a6a886a179624f69fe119db3c024a44
 T
 $MsTGANet/modules/sampling_factory.py,3\7\375fbe8058bd3e1ba29b80055316c1e42068783b
-N
-MsTGANet/template/attention.py,4\c\4c0514c7356c12b0e76c4a366d988754ba584434
-L
-MsTGANet/modules/sampling.py,f\3\f32ad8dba4e47f78dccf9245342ce2fc0a29c2ea
-O
-MsTGANet/modules/up_sampling.py,f\e\fe814f78a490653666031e68a3878d2297cc51c0
 G
 MsTGANet/Ki_MsTGANet.py,d\4\d40416ba9e94fb6698c0263fe82c201ecf0b6a9d
-M
-MsTGANet/template/template.py,8\8\881e28399cb49de32c2cdf447c5e27486a420524
-P
- MsTGANet/modules/convolutions.py,c\c\ccf86748d0ce9982ff1047db4f17b8082aa8d988
-N
-MsTGANet/modules/cross_over.py,6\a\6a3184a87a4644a82f4d41438da00819caf84e37
 I
 MsTGANet/merger/merger.py,3\3\3330be43f56ce7fca5cfa40288d40d23c91d1c02
-F
-KiUNet/modules/mfrb.py,e\c\ec7593e7f74bac5704fab351871474840ba4202d
-H
-KiUNet/modules/kiunet.py,d\7\d72f63eb77bbd4ca1ed7233927210aedaaa1de11
-Q
-!KiUNet/modules/skip_connection.py,d\d\ddff7e943d024c8a1c20eb95a5fa732b62121bae

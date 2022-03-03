@@ -6,7 +6,7 @@ from torch import Tensor, zeros_like
 
 from MsTGANet.modules.sampling import Sampling
 from MsTGANet.modules.sampling_factory import SamplingFactory
-from MsTGANet.template.skip_module import SkipModule
+from MsTGANet.modules.skip_module import SkipModule
 
 
 class AttentionEncoder(nn.Module):
@@ -31,7 +31,7 @@ class AttentionEncoder(nn.Module):
         # noinspection PyShadowingBuiltins
         for filter, scale in zip(filters, scales):
             self._downsamples.append(
-                    Sampling(filter, channels, scale, 3)
+                    Sampling(filter, channels, 3, scale)
             )
 
         self.query_conv = nn.Conv2d(channels, channels // 8, 1)

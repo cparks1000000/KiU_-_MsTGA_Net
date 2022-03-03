@@ -3,14 +3,11 @@
     <Python>
       <option name="ALIGN_MULTILINE_IMPORTS" value="false" />
       <option name="USE_CONTINUATION_INDENT_FOR_ARGUMENTS" value="true" />
-      <option name="OPTIMIZE_IMPORTS_JOIN_FROM_IMPORTS_WITH_SAME_SOURCE" value="true" />
       <option name="FROM_IMPORT_WRAPPING" value="0" />
     </Python>
     <codeStyleSettings language="Python">
       <option name="RIGHT_MARGIN" value="0" />
-      <indentOptions>
-        <option name="USE_TAB_CHARACTER" value="true" />
-      </indentOptions>
+      <option name="SOFT_MARGINS" value="125" />
     </codeStyleSettings>
   </code_scheme>
 </component>

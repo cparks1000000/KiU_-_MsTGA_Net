@@ -4,10 +4,12 @@ from typing import List
 
 from torch import nn, Tensor
 
+from MsTGANet.models.KiNet_and_UNet import KiNet, UNet
+from MsTGANet.models.base_model import BaseModel
 from MsTGANet.modules.cross_over import CrossOver
 from MsTGANet.modules.parallel import Parallel, Split, Sum
 from MsTGANet.modules.sampling_factory import DefaultDownsampleFactory, DefaultUpsampleFactory
-from MsTGANet.template.template import Template
+from MsTGANet.models.template import Template
 
 
 def form_parallel_list(left_list: nn.ModuleList, right_list: nn.ModuleList) -> nn.ModuleList:
@@ -17,10 +19,11 @@ def form_parallel_list(left_list: nn.ModuleList, right_list: nn.ModuleList) -> n
 	return output
 
 
-class Merger(nn.Module):
+class Merger(BaseModel):
 	# noinspection PyDefaultArgument
-	def __init__(self, channels_in: int, number_of_classes: int, height: int, width: int, *, channels_list: List[int] = [32, 64, 128, 256, 512]) -> None:
-		super().__init__()
+	def __init__(self, channels_in: int, height: int, width: int, number_of_classes: int, *,
+				 channels_list: List[int] = [32, 64, 128, 256, 512]) -> None:
+		super().__init__("merger", channels_in, height, width, number_of_classes)
 		upsample_factory = DefaultUpsampleFactory()
 		downsample_factory = DefaultDownsampleFactory()
 		assert upsample_factory.get_scale() == downsample_factory.get_scale(), "The upsample and downsample scales must agree."
@@ -28,19 +31,9 @@ class Merger(nn.Module):
 		for _ in channels_list[2:]:
 			upscales.append(upsample_factory.scale(upscales[-1]))
 
-		u = Template(
-			channels_in, number_of_classes, height, width,
-			channels_list=channels_list,
-			encoder_sampling=downsample_factory,
-			decoder_sampling=upsample_factory
-		)
+		u = UNet(channels_in, height, width, number_of_classes, channels_list=channels_list)
 
-		k = Template(
-			channels_in, number_of_classes, height, width,
-			channels_list=channels_list,
-			encoder_sampling=upsample_factory,
-			decoder_sampling=downsample_factory
-		)
+		k = KiNet(channels_in, height, width, number_of_classes, channels_list=channels_list)
 
 		self.skips: nn.ModuleList = form_parallel_list(u.skip_modules, k.skip_modules)
 		self.split: Split = Split()

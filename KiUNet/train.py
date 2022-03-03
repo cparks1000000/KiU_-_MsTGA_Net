@@ -16,7 +16,8 @@ import cv2
 from functools import partial
 from random import randint
 
-from KiUNet.arch.kiunet import KiUNet, kinetwithsk, Unet, autoencoder, ResKiUNet,DenseKiUNet
+from KiUNet.modules.kiunet import KiUNet, kinetwithsk, Unet, autoencoder, ResKiUNet,DenseKiUNet
+
 
 def mae(imageA, imageB):
     # the 'Mean Squared Error' between the two images is the
@@ -177,8 +178,7 @@ for epoch in range(args.epochs):
         X_batch = Variable(X_batch.to(device ='cuda'))
         y_batch = Variable(y_batch.to(device='cuda'))
         
-        numr = randint(0,9)
-
+        numr = randint(0, 9)
 
         if aug=='on':
 
