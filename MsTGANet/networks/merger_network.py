@@ -7,32 +7,41 @@ from torch import nn, Tensor
 from torch.optim import Adam
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
+from torchvision.transforms import ToTensor
 
-from ..datasets.base_dataset import BaseDataset
-from ..models.KiNet_and_UNet import UNet
-from ..models.base_model import BaseModel
-from ..models.merger import Merger
+from MsTGANet.datasets.base_dataset import BaseDataset, LoadDataset
 
-from ..modules.loss import MergerLoss
-from ..modules.util import may_print
-from ..options.base_options import BaseOptions
+from MsTGANet.models.KiNet_and_UNet import UNet, KiNet
+from MsTGANet.models.base_model import BaseModel
+from MsTGANet.models.merger import Merger
+
+from MsTGANet.modules.loss import MergerLoss
+from MsTGANet.modules.util import may_print
+from MsTGANet.options.base_options import BaseOptions
 
 
 class TemplateNetwork(nn.Module):
     def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset, model: BaseModel):
         super().__init__()
+        # Model we are training/testing
         self._model: BaseModel = model
+
+        # Loss function = Dice loss + cross entropy loss
         self._loss_function: nn.Module = MergerLoss()
+
         self._optimizer: torch.optim.Optimizer = Adam(self._module.parameters(), opt.learning_rate)
         self._scheduler: StepLR = StepLR(self._optimizer, opt.epoch_between_decay, opt.decay_rate)
 
+        # Load images to train
         self._train_loader: DataLoader = DataLoader(
                 train_set, batch_size=opt.batch_size, shuffle=True, num_workers=opt.dataloader_threads
         )
+        # Load images to test
         # noinspection PyArgumentEqualDefault
         self._test_loader: DataLoader = DataLoader(
                 test_set, batch_size=1, shuffle=True, num_workers=opt.dataloader_threads
         )
+
         self._opt = opt
         self.to(opt.device)
 
@@ -46,8 +55,11 @@ class TemplateNetwork(nn.Module):
         opt = self._opt
         total_loss: float = 0
         for batch_number, batch in enumerate(self._train_loader, 1):
+            # image tensor
             images = batch[0].to(opt.device)
+            # label of image tensor
             labels = batch[1].to(opt.device)
+
             total_loss += self._do_batch(images, labels, epoch_number, batch_number)
         self._scheduler.step()
         may_print(opt.verbose, "The loss for epoch", epoch_number, "was", str(total_loss) + ".")
@@ -76,9 +88,9 @@ class TemplateNetwork(nn.Module):
             image = batch[0].to(self._opt.device)
             label = batch[0].to(self._opt.device)
             probability = self._model(image)
-            true_positives.append( self.true_positive(probability, label) )
-            false_positives.append( self.false_positives(probability, label) )
-            false_negatives.append( self.false_negative(probability, label) )
+            true_positives.append(self.true_positive(probability, label))
+            false_positives.append(self.false_positives(probability, label))
+            false_negatives.append(self.false_negative(probability, label))
 
         IoU: float = sum(true_positives)/sum(true_positives + false_positives + false_negatives)
         dice: float = 0
@@ -129,3 +141,12 @@ class UNetwork(TemplateNetwork):
     def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset):
         model: BaseModel = UNet(opt.channels_in, opt.height, opt.width, opt.number_of_classes)
         super().__init__(opt, test_set, train_set, model)
+
+
+class KiNetwork(TemplateNetwork):
+    def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset):
+        model: BaseModel = KiNet(opt.channels_in, opt.height, opt.width, opt.number_of_classes)
+        super().__init__(opt, test_set, train_set, model)
+
+
+test_set = LoadDataset(csv_file='Grade.csv', root_dir='GLAS', transform=ToTensor())

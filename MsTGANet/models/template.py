@@ -31,7 +31,7 @@ class Template(nn.Module):
         self.encoder_blocks: nn.ModuleList = nn.ModuleList()
         for channels_in, channels_out in zip(channels_list, channels_list[1:]):
             self.skip_modules.append(SimpleSkipModule(channels_in, width, height))
-            self.encoder_blocks.append( nn.Sequential(
+            self.encoder_blocks.append(nn.Sequential(
                     encoder_sampling.get(),
                     ConvolutionBlock(channels_in, channels_out)
            ))
@@ -43,7 +43,7 @@ class Template(nn.Module):
 
         self.transformer = Attention(channels_list, height, width, self.skip_modules.copy(), encoder_sampling)
         channels_list.reverse()
-        self.decoder_blocks = nn.ModuleList()
+        self.decoder_blocks: nn.ModuleList = nn.ModuleList()
         for channels_in, channels_out in zip(channels_list, channels_list[1:]):
             self.decoder_blocks.append(nn.Sequential(
                 decoder_sampling.get(),
@@ -61,6 +61,7 @@ class Template(nn.Module):
         )
 
     # We won't use the forward directly.
+    # Forward output is given to respective classes
     def forward(self, x: Tensor) -> Tensor:
         layer: nn.Module
         encoded: Tensor = x

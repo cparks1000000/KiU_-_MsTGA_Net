@@ -19,7 +19,7 @@ class DiceLoss(nn.Module):
 
         return 1 - dice
 
-
+# todo: DiceLoss not callable
 class MergerLoss(nn.Module):
     def __init__(self) -> None:
         super().__init__()

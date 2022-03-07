@@ -3,6 +3,7 @@ from __future__ import annotations
 from torch import nn, Tensor
 
 
+# todo: kernel_size, stride, padding in opt?
 class ConvolutionModule(nn.Module):
     def __init__(self, channels_in: int, channels_out: int, kernel_size: int, stride: int, padding: int):
         super().__init__()

@@ -9,7 +9,6 @@ from MsTGANet.models.base_model import BaseModel
 from MsTGANet.modules.cross_over import CrossOver
 from MsTGANet.modules.parallel import Parallel, Split, Sum
 from MsTGANet.modules.sampling_factory import DefaultDownsampleFactory, DefaultUpsampleFactory
-from MsTGANet.models.template import Template
 
 
 def form_parallel_list(left_list: nn.ModuleList, right_list: nn.ModuleList) -> nn.ModuleList:
