@@ -41,7 +41,7 @@ class BaseModel(nn.Module, ABC):
     def __new__(cls, *args: Any, **kwargs: Any) -> BaseModel:
         # todo: See if this has an issue.
         self = super().__new__(cls)
-        self.set_requires_grad(cls._default_requires_grad)
+        # self.set_requires_grad(cls._default_requires_grad)
         return self
 
     # The file_name parameter must be a property of the inheriting class.

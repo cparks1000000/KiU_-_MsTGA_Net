@@ -23,7 +23,7 @@ class BaseDataset(Dataset, ABC):
 class LoadDataset(BaseDataset):
 
 	def __init__(self, csv_file, root_dir, transform=None):
-		self.data_labels = pd.read_csv(csv_file)
+		self.data_labels = pd.read_csv(csv_file, header=0)
 		self.root_dir = root_dir
 		self.transform = transform
 
@@ -37,7 +37,3 @@ class LoadDataset(BaseDataset):
 		if self.transform:
 			image = self.transform(image)
 		return [image, label]
-
-cwd = os.getcwd()
-files = os.listdir(cwd)
-print(files)

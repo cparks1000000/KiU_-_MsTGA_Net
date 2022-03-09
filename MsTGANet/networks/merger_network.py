@@ -147,6 +147,3 @@ class KiNetwork(TemplateNetwork):
     def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset):
         model: BaseModel = KiNet(opt.channels_in, opt.height, opt.width, opt.number_of_classes)
         super().__init__(opt, test_set, train_set, model)
-
-
-test_set = LoadDataset(csv_file='Grade.csv', root_dir='GLAS', transform=ToTensor())
