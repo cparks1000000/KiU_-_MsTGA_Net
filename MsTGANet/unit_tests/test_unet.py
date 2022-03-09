@@ -23,7 +23,7 @@ class TestUNet(Template, BaseModel):
             decoder_sampling=upsample_factory,
             channels_list=channels_list,
         )
-        BaseModel.__init__(self, "test_u_net", channels_in, height, width, number_of_classes)
+        BaseModel("test_u_net", channels_in, height, width, number_of_classes)
 
 
 class TestUNetwork(TemplateNetwork):
@@ -40,6 +40,6 @@ test_data: BaseDataset = LoadDataset(
         csv_file="/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/datasets/GLAS/Test_Set/Grade_Test.csv",
         root_dir="GLAS/Test_Set/")
 
-model = TestUNet(BaseOptions.channels_in, BaseOptions.height, BaseOptions.width, BaseOptions.number_of_classes)
+model = TestUNetwork(BaseOptions(), test_data, train_data)
 
 
