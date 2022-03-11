@@ -5,13 +5,15 @@ from typing import List
 import torch.nn as nn
 from torch import Tensor
 
+from MsTGANet.models.base_model import BaseModel
 from MsTGANet.modules.convolutions import ConvolutionBlock
 from MsTGANet.modules.attention import Attention
 from MsTGANet.modules.sampling_factory import SamplingFactory, DefaultDownsampleFactory, DefaultUpsampleFactory
 from MsTGANet.modules.skip_module import SimpleSkipModule
+from MsTGANet.util.utils import copy_module_list
 
 
-class Template(nn.Module):
+class Template(BaseModel):
     # noinspection PyDefaultArgument
     def __init__(self,
                  channels_in: int,
@@ -22,7 +24,7 @@ class Template(nn.Module):
                  decoder_sampling: SamplingFactory = DefaultUpsampleFactory(),
                  *,
                  channels_list: List[int] = [32, 64, 128, 256, 512]) -> None:
-        super().__init__()
+        super().__init__("delete_me")
         print("================ MsTGANet ================")
 
         self.initial_block = ConvolutionBlock(channels_in, channels_list[0])
@@ -41,7 +43,7 @@ class Template(nn.Module):
             assert encoder_sampling.scale_int(height) == encoder_sampling.scale(height), "This resolution is not supported yet."
             height = encoder_sampling.scale_int(height)
 
-        self.transformer = Attention(channels_list, height, width, self.skip_modules.copy(), encoder_sampling)
+        self.transformer = Attention(channels_list, height, width, copy_module_list(self.skip_modules), encoder_sampling)
         channels_list.reverse()
         self.decoder_blocks: nn.ModuleList = nn.ModuleList()
         for channels_in, channels_out in zip(channels_list, channels_list[1:]):

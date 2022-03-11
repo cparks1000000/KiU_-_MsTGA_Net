@@ -10,14 +10,14 @@ class ConvolutionModule(nn.Module):
         assert padding >= 0, "Padding must be at least zero."
         assert kernel_size > 0, "Kernel size must be at least one."
         # noinspection PyArgumentEqualDefault
-        self._modules: nn.Module = nn.Sequential(
+        self._output: nn.Module = nn.Sequential(
             nn.Conv2d(channels_in, channels_out, kernel_size=kernel_size, stride=stride, padding=padding),
             nn.BatchNorm2d(channels_out),
             nn.ReLU(inplace=True)
         )
 
     def forward(self, x: Tensor) -> Tensor:
-        return self._modules(x)
+        return self._output(x)
 
 
 class FeatureConvolution(ConvolutionModule):
@@ -40,10 +40,10 @@ class ConvolutionBlock(nn.Module):
     def __init__(self, channels_in: int, channels_out: int) -> None:
         super().__init__()
         # noinspection PyArgumentEqualDefault
-        self._modules: nn.Module = nn.Sequential(
+        self._output: nn.Module = nn.Sequential(
             FeatureConvolution(channels_in, channels_out),
             FeatureConvolution(channels_out, channels_out)
         )
 
     def forward(self, x: Tensor) -> Tensor:
-        return self._modules(x)
+        return self._output(x)

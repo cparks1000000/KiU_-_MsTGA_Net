@@ -38,12 +38,6 @@ class BaseModel(nn.Module, ABC):
     def set_default_requires_grad(cls, flag: bool):
         cls._default_requires_grad = flag
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> BaseModel:
-        # todo: See if this has an issue.
-        self = super().__new__(cls)
-        self.set_requires_grad(cls._default_requires_grad)
-        return self
-
     # The file_name parameter must be a property of the inheriting class.
     def __init__(self, file_name: str, *signature_args: Any):
         super().__init__()

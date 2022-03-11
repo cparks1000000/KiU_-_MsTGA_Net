@@ -9,7 +9,8 @@ from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 
-from MsTGANet.datasets.base_dataset import BaseDataset, LoadDataset
+from MsTGANet.datasets.base_dataset import BaseDataset
+from datasets.load_dataset import LoadDataset
 
 from MsTGANet.models.KiNet_and_UNet import UNet, KiNet
 from MsTGANet.models.base_model import BaseModel
@@ -18,6 +19,7 @@ from MsTGANet.models.merger import Merger
 from MsTGANet.modules.loss import MergerLoss
 from MsTGANet.modules.util import may_print
 from MsTGANet.options.base_options import BaseOptions
+from MsTGANet.util.logger import Logger
 
 
 class TemplateNetwork(nn.Module):
@@ -29,7 +31,7 @@ class TemplateNetwork(nn.Module):
         # Loss function = Dice loss + cross entropy loss
         self._loss_function: nn.Module = MergerLoss()
 
-        self._optimizer: torch.optim.Optimizer = Adam(self._module.parameters(), opt.learning_rate)
+        self._optimizer: torch.optim.Optimizer = Adam(self._model.parameters(), opt.learning_rate)
         self._scheduler: StepLR = StepLR(self._optimizer, opt.epoch_between_decay, opt.decay_rate)
 
         # Load images to train
@@ -42,6 +44,7 @@ class TemplateNetwork(nn.Module):
                 test_set, batch_size=1, shuffle=True, num_workers=opt.dataloader_threads
         )
 
+        self._logger = Logger(opt.number_of_epochs, 10)
         self._opt = opt
         self.to(opt.device)
 
@@ -73,6 +76,11 @@ class TemplateNetwork(nn.Module):
         self._optimizer.step()
         may_print(self._opt.verbose and batch_number % 10 == 0,
                   "The loss for batch", batch_number, "of epoch", epoch_number, "was", str(loss)+".")
+        if batch_number % 10 == 0:
+            self._logger.log(
+                    losses={"segmentation_loss": loss},
+                    images={"input": images[0], "segmentation": output[0]}
+            )
         return loss.item()
 
     # todo: Calculate the Ppmcc from MsTGANet?
@@ -133,17 +141,17 @@ class TemplateNetwork(nn.Module):
 
 class MergerNetwork(TemplateNetwork):
     def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset):
-        model: BaseModel = Merger(opt.channels_in, opt.height, opt.width, opt.number_of_classes)
+        model: BaseModel = Merger(opt.channels, opt.height, opt.width, opt.number_of_classes)
         super().__init__(opt, test_set, train_set, model)
 
 
 class UNetwork(TemplateNetwork):
     def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset):
-        model: BaseModel = UNet(opt.channels_in, opt.height, opt.width, opt.number_of_classes)
+        model: BaseModel = UNet(opt.channels, opt.height, opt.width, opt.number_of_classes)
         super().__init__(opt, test_set, train_set, model)
 
 
 class KiNetwork(TemplateNetwork):
     def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset):
-        model: BaseModel = KiNet(opt.channels_in, opt.height, opt.width, opt.number_of_classes)
+        model: BaseModel = KiNet(opt.channels, opt.height, opt.width, opt.number_of_classes)
         super().__init__(opt, test_set, train_set, model)

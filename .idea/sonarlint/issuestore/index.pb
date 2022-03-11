@@ -5,8 +5,6 @@
 ,.idea/inspectionProfiles/Project_Default.xml,4\9\496a238a6afa168dbaf6efd37bb459331589579c
 T
 $.idea/codeStyles/codeStyleConfig.xml,d\d\dd7b3350c29c49497756c7f32c69a3bed18b1cba
-D
-MsTGANet/Ki_MsTNL.py,e\8\e80b7ee85d28176bebfd53b48dc45f9de4dbcbff
 e
 5KiUNet/_OTHER/BRATS/experiments/kiunet3d_wo_crop.yaml,4\f\4f8c12aa1750dc59453f2247aca602b6de9ba3cb
 `
@@ -15,8 +13,6 @@ e
 0KiUNet/_OTHER/BRATS/experiments/kiunet3d_n4.yaml,b\f\bfee5adf1e75d80413d938f8b7fda41ac37dec59
 ]
 -KiUNet/_OTHER/BRATS/experiments/kiunet3d.yaml,5\d\5d9d27f09d627bb5aece0f722cb41f38b59ca7f9
-M
-MsTGANet/template/__init__.py,6\d\6d2ba51df3268e730eca2f90218562ab89c90db4
 [
 +KiUNet/_OTHER/BRATS/experiments/kiunet.yaml,3\a\3ae05062227363bbdedd975db84d8e1d23336822
 V
@@ -85,8 +81,6 @@ B
 KiUNet/__init__.py,a\7\a72f0715a148ab442e033a9790e83b2713eb6664
 J
 KiUNet/modules/__init__.py,4\c\4cb6b5346c455b56fed0a4aa40c800a051c7b759
-D
-MsTGANet/__init__.py,5\7\576a0821213496807648660ecd339a1df422d401
 j
 :KiUNet/_OTHER/LiTS/data_analysis/liver_voxel_percentage.py,9\0\90c98723b8b719c0a37d0ab3134a2f80b497f384
 j
@@ -103,16 +97,10 @@ a
 1KiUNet/_OTHER/LiTS/utilities/calculate_metrics.py,e\b\eb8dd81f4358f99b21cab8725d8790f06db2e113
 U
 %KiUNet/_OTHER/LiTS/DenseCRF/3D-CRF.py,e\2\e2b1f81659927d78ce5c68800b30532f8cc60c07
-A
-MsTGANet/MsGCS.py,2\6\26dc8af52b9130d8941d7e11b4869ecea9c506f3
 U
 %KiUNet/_OTHER/LiTS/DenseCRF/2D-CRF.py,2\2\220be2d9b73d8aa19fbdc781dcf2a75f508fd776
-C
-MsTGANet/U_MsTNL.py,a\4\a427b2b315f82512eccfb4f3f7fc99c67ddf7fbd
 U
 %KiUNet/_OTHER/LiTS/dataset/dataset.py,a\3\a3a7e49b6475e2f3fe78f06be6c78f48be8faa06
-F
-MsTGANet/U_MsTGANet.py,5\e\5e41dca10beba92dc105c8e2d5107a23b9178f36
 O
 KiUNet/_OTHER/LiTS/loss/WBCE.py,d\7\d717e3456aa0ef420a254593a7d836069b8a99f1
 R
@@ -141,11 +129,5 @@ L
 KiUNet/_OTHER/LiTS/README.md,0\8\0825e397906174ebf2a1f17e5e4a138029e87831
 O
 KiUNet/_OTHER/LiTS/parameter.py,d\4\d4f175efde3ca70af30ba7bc87934ff652bcb4de
-K
-MsTGANet/merger/__init__.py,4\7\4703591270cefbc248ccd6af1de34e619c6bbe18
 T
 $MsTGANet/modules/sampling_factory.py,3\7\375fbe8058bd3e1ba29b80055316c1e42068783b
-G
-MsTGANet/Ki_MsTGANet.py,d\4\d40416ba9e94fb6698c0263fe82c201ecf0b6a9d
-I
-MsTGANet/merger/merger.py,3\3\3330be43f56ce7fca5cfa40288d40d23c91d1c02
