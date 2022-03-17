@@ -10,7 +10,7 @@ from MsTGANet.modules.convolutions import SkipConvolution, FeatureConvolution
 class SkipModule(nn.Module):
     _saved: Tensor
 
-    def __init__(self, decoder_channels_in: int, encoder_channels_in: int, channels_out: int, height: int, width: int):
+    def __init__(self, decoder_channels_in: int, encoder_channels_in : int, channels_out: int, height: int, width: int):
         super().__init__()
         print("=============== MsGCS ===============")
 
@@ -20,6 +20,8 @@ class SkipModule(nn.Module):
 
         total_channels_in: int = decoder_channels_in + encoder_channels_in
         middle_channels: int = total_channels_in//4
+        if middle_channels == 0:
+            middle_channels = 1
         self._fusion = nn.Sequential(
             SkipConvolution(total_channels_in, middle_channels),
             SkipConvolution(middle_channels, 1)
@@ -38,12 +40,14 @@ class SkipModule(nn.Module):
         if self._uses == 1:
             self._saved = inputs
             return inputs
+
         else:
             combined_data = self._fusion(torch.cat([inputs, self._saved], dim=1))
             heat_map = self.height_tensor + self.width_tensor
             attention = self._activation(heat_map * combined_data)
             attended_encoder_data = attention * self._saved
-            return self._normalize_channels(cat([inputs, attended_encoder_data]))
+            # changed: original concatenation did not concatenate the correct dimensions
+            return self._normalize_channels(torch.cat([inputs, attended_encoder_data], dim=1))
 
     def get_saved(self) -> Tensor:
         assert self._uses == 1 or self._uses == 2, "You tried to use a skip module twice."

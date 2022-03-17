@@ -8,6 +8,9 @@ class AttentionDecoder(nn.Module):
         super().__init__()
         print("================= Multi_Head_Decoder =================")
 
+        # added initialization of channels_in so it can be accessed in forward
+        self.channels_in = channels_in
+
         self.height_tensor = nn.Parameter(torch.randn([1, channels_in // 8, height, 1]))
         self.width_tensor = nn.Parameter(torch.randn([1, channels_in // 8, 1, width]))
         self.gamma = nn.Parameter(torch.zeros(1))

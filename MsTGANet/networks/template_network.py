@@ -17,13 +17,13 @@ from MsTGANet.models.base_model import BaseModel
 from MsTGANet.models.merger import Merger
 
 from MsTGANet.modules.loss import MergerLoss
-from MsTGANet.modules.util import may_print
+from MsTGANet.util.utils import may_print
 from MsTGANet.options.base_options import BaseOptions
 from MsTGANet.util.logger import Logger
 
 
 class TemplateNetwork(nn.Module):
-    def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset, model: BaseModel):
+    def __init__(self, opt: BaseOptions, test_set, train_set, model: BaseModel):
         super().__init__()
         # Model we are training/testing
         self._model: BaseModel = model
@@ -44,7 +44,7 @@ class TemplateNetwork(nn.Module):
                 test_set, batch_size=1, shuffle=True, num_workers=opt.dataloader_threads
         )
 
-        self._logger = Logger(opt.number_of_epochs, 10)
+        # self._logger = Logger(opt.number_of_epochs, 10)
         self._opt = opt
         self.to(opt.device)
 
@@ -71,17 +71,21 @@ class TemplateNetwork(nn.Module):
     def _do_batch(self, images: Tensor, labels: Tensor, epoch_number: int, batch_number: int) -> float:
         self._optimizer.zero_grad()
         output: Tensor = self._model(images)
+        # todo: loss function not working with output/labels shape
         loss: Tensor = self._loss_function(output, labels)
         loss.backward()
         self._optimizer.step()
         may_print(self._opt.verbose and batch_number % 10 == 0,
                   "The loss for batch", batch_number, "of epoch", epoch_number, "was", str(loss)+".")
-        if batch_number % 10 == 0:
-            self._logger.log(
-                    losses={"segmentation_loss": loss},
-                    images={"input": images[0], "segmentation": output[0]}
-            )
         return loss.item()
+
+        # Logger not working with my computer, will focus on getting it running after initial debugging
+        # if batch_number % 10 == 0:
+        #     self._logger.log(
+        #             losses={"segmentation_loss": loss},
+        #             images={"input": images[0], "segmentation": output[0]}
+        #     )
+        # return loss.item()
 
     # todo: Calculate the Ppmcc from MsTGANet?
     def do_test(self, load: bool = False):
@@ -145,8 +149,9 @@ class MergerNetwork(TemplateNetwork):
         super().__init__(opt, test_set, train_set, model)
 
 
+# Currently testing
 class UNetwork(TemplateNetwork):
-    def __init__(self, opt: BaseOptions, test_set: BaseDataset, train_set: BaseDataset):
+    def __init__(self, opt: BaseOptions, test_set, train_set):
         model: BaseModel = UNet(opt.channels, opt.height, opt.width, opt.number_of_classes)
         super().__init__(opt, test_set, train_set, model)
 

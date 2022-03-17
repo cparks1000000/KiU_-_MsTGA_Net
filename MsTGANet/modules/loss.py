@@ -1,6 +1,6 @@
 from functools import reduce
 
-from torch import nn, Tensor
+from torch import nn, Tensor, torch
 
 
 class DiceLoss(nn.Module):
@@ -27,4 +27,5 @@ class MergerLoss(nn.Module):
         self._dice = DiceLoss()
 
     def forward(self, inputs: Tensor, labels: Tensor) -> Tensor:
+        # todo: cross entropy loss does not take 4D tensors, did not like argmax (long output instead of float)
         return self._cross_entropy(inputs, labels) + self._dice(inputs, labels)

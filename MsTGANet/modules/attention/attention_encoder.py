@@ -14,6 +14,9 @@ class AttentionEncoder(nn.Module):
         super().__init__()
         print("================= Multi_Head_Encoder =================")
 
+        # added initialization of channels_in so it can be accessed in forward
+        self.channels = channels
+
         # Parameters have requires_grad=True as default.
         self.height_tensor = nn.Parameter(torch.randn([1, channels // 8, height, 1]))
         self.width_tensor = nn.Parameter(torch.randn([1, channels // 8, 1, width]))
@@ -40,6 +43,7 @@ class AttentionEncoder(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, final_encoded: Tensor, encoded_list: List[Tensor]) -> Tensor:
+
         batch_size, C, width, height = final_encoded.size()
 
         total: Tensor = zeros_like(final_encoded)
@@ -52,9 +56,10 @@ class AttentionEncoder(nn.Module):
 
         energy_content = torch.bmm(proj_query, proj_key)
 
-        content_position = (self.height_tensor + self.width_tensor).view(1, self.chanel_in // 8, -1)
+        content_position = (self.height_tensor + self.width_tensor).view(1, self.channels // 8, -1)
         content_position = torch.matmul(proj_query, content_position)
         energy = energy_content + content_position
+
         attention = self.softmax(energy)
         proj_value = self.value_conv(final_encoded).view(batch_size, -1, width * height)
 

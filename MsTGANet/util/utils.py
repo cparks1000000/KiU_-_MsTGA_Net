@@ -21,6 +21,7 @@ def build_string(*args: Any) -> str:
         output += str(arg)
     return output
 
+
 def build_signature(*args: Any) -> str:
     output = ""
     if len(args) != 0:
@@ -75,3 +76,22 @@ def copy_module_list(input_list: nn.ModuleList) -> nn.ModuleList:
     for element in input_list:
         output_list.append(element)
     return output_list
+
+
+# changed: added reverse function for ModuleList
+# gives correct reversal
+def reverse(input_list: nn.ModuleList) -> nn.ModuleList:
+    output_list = nn.ModuleList()
+    for element in input_list[::-1]:
+        output_list.append(element)
+    return output_list
+
+
+class Log(nn.Module):
+    def forward(self, x: Tensor) -> Tensor:
+        return torch.log(x)
+
+
+def may_print(flag: bool, *args: Any) -> None:
+    if flag:
+        print(*args)
