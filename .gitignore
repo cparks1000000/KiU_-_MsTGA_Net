@@ -1,2 +1,5 @@
 /KiUNet/_OTHER/
 /MsTGANet/data/
+/MsTGANet/make_dataset/MNIST/
+/MsTGANet/make_dataset/test_set/
+/MsTGANet/make_dataset/train_set/

@@ -21,11 +21,11 @@ downsample_factory = DefaultDownsampleFactory()
 
 # Used SVHN dataset, there is an issue with 28 x 28 images
 train_set: BaseDataset = DatasetWrapper(SVHN(
-    root="data", split='train', transform=ToTensor()
+    root="data", split='train', download=True, transform=ToTensor()
 ))
 
 test_set: BaseDataset = DatasetWrapper(SVHN(
-    root="data", split='test', transform=ToTensor()
+    root="data", split='test', download=True, transform=ToTensor()
 ))
 
 # 3 channels for color images, each is 32x32, and we are segmenting into two classes
