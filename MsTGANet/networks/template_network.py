@@ -60,8 +60,10 @@ class TemplateNetwork(nn.Module):
         for batch_number, batch in enumerate(self._train_loader, 1):
             # image tensor
             images = batch[0].to(opt.device)
+            print(images.size())
             # label of image tensor
             labels = batch[1].to(opt.device)
+            print(labels.size())
 
             total_loss += self._do_batch(images, labels, epoch_number, batch_number)
         self._scheduler.step()

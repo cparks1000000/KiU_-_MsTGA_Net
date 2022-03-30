@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from torchvision.datasets import SVHN, MNIST
 from torchvision.transforms import Compose, ToTensor
 
 from MsTGANet.modules.sampling_factory import DefaultUpsampleFactory, DefaultDownsampleFactory
@@ -13,23 +12,16 @@ from datasets.load_dataset import LoadDataset
 upsample_factory = DefaultUpsampleFactory()
 downsample_factory = DefaultDownsampleFactory()
 
-# train_set: BaseDataset = LoadDataset(
-#             csv_file="/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/datasets/GLAS/Train_Set/Grade_Train.csv",
-#             root_dir="/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/datasets/GLAS/Train_Set/",
-#         )
 
+train_set: BaseDataset = LoadDataset('/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/unit_tests/data/dataset/train_set/images',
+                                     '/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/unit_tests/data/dataset/train_set/labels',
+                                     transform=ToTensor(), label_transform=ToTensor())
 
-# Used SVHN dataset, there is an issue with 28 x 28 images
-train_set: BaseDataset = DatasetWrapper(SVHN(
-    root="data", split='train', download=True, transform=ToTensor()
-))
+test_set: BaseDataset = LoadDataset('/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/unit_tests/data/dataset/test_set/images',
+                                     '/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/unit_tests/data/dataset/test_set/labels',
+                                     transform=ToTensor(), label_transform=ToTensor())
 
-test_set: BaseDataset = DatasetWrapper(SVHN(
-    root="data", split='test', download=True, transform=ToTensor()
-))
-
-# 3 channels for color images, each is 32x32, and we are segmenting into two classes
-opt: BaseOptions = BaseOptions(3, 32, 32, 2)
+opt: BaseOptions = BaseOptions(1, 32, 32, 2)
 
 
 def test_u_network() -> None:

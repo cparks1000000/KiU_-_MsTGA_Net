@@ -49,6 +49,7 @@ class Merger(BaseModel):
 		for channels, upscale in zip(channels_list, upscales):
 			self.encoder_crossing.append(CrossOver(channels, upscale))
 			self.decoder_crossing.append(CrossOver(channels, upscale))
+		# noinspection PyTypeChecker
 		self.decoder_crossing: nn.ModuleList = self.decoder_crossing[::-1]
 
 	def forward(self, x: Tensor) -> Tensor:
