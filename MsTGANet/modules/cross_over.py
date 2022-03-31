@@ -6,7 +6,7 @@ from MsTGANet.modules.sampling import Sampling
 
 
 class CrossOver(nn.Module):
-	def __init__(self, channels: int, up_scale: float ) -> None:
+	def __init__(self, channels: int, up_scale: float) -> None:
 		super().__init__()
 		self._downsample = Sampling(channels, channels, 3, 1/up_scale)
 		self._upsample = Sampling(channels, channels, 3, up_scale)

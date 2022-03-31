@@ -10,7 +10,8 @@ class Parallel(nn.Module):
 		self._left: nn.Module = left_module
 
 	def forward(self, pair: (Tensor, Tensor)) -> (Tensor, Tensor):
-		return self._right(pair[0]), self._left(pair[1])
+		# changed: switched left and right sides on output to match expected left/right orientation
+		return self._left(pair[0]), self._right(pair[1])
 
 
 class Split(nn.Module):

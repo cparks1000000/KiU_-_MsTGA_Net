@@ -21,14 +21,17 @@ def form_parallel_list(left_list: nn.ModuleList, right_list: nn.ModuleList) -> n
 class Merger(BaseModel):
 	# noinspection PyDefaultArgument
 	def __init__(self, channels_in: int, height: int, width: int, number_of_classes: int, *,
-				 channels_list: List[int] = [32, 64, 128, 256, 512]) -> None:
+				  channels_list: List[int] = [32, 64, 128, 256, 512]) -> None:
 		super().__init__("merger", channels_in, height, width, number_of_classes)
 		upsample_factory = DefaultUpsampleFactory()
 		downsample_factory = DefaultDownsampleFactory()
 		assert upsample_factory.get_scale() == downsample_factory.get_scale(), "The upsample and downsample scales must agree."
 		upscales: List[float] = [1]
 		for _ in channels_list[2:]:
-			upscales.append(upsample_factory.scale(upscales[-1]))
+			# changed: upsample scale to factor in both that the ki_net and u_net are being encoded/decoded at the same scale
+			# the scale factor necessary for both sides to match in scale will be upsample_factory.scale(upscales[-1])*2
+			sample_scale = upsample_factory.scale(upscales[-1])
+			upscales.append(sample_scale*2)
 
 		u = UNet(channels_in, height, width, number_of_classes, channels_list=channels_list)
 
@@ -38,7 +41,8 @@ class Merger(BaseModel):
 		self.split: Split = Split()
 
 		self.initial: Parallel = Parallel(u.initial_block, k.initial_block)
-		self.encoders: nn.ModuleList = form_parallel_list(u.encoder_blocks, k.decoder_blocks)
+		# changed: k.decoder_blocks to k.encoder_blocks
+		self.encoders: nn.ModuleList = form_parallel_list(u.encoder_blocks, k.encoder_blocks)
 		self.transformer: Parallel = Parallel(u.transformer, k.transformer)
 		self.decoders: nn.ModuleList = form_parallel_list(u.decoder_blocks, k.decoder_blocks)
 		self.final: Parallel = Parallel(u.final_block, k.final_block)
@@ -60,6 +64,7 @@ class Merger(BaseModel):
 			x = cross_over(x)
 			x = block(x)
 		x = self.transformer(x)
+		print(1)
 		for block, cross_over, skip in zip(self.decoders, self.decoder_crossing, self.skips):
 			x = block(x)
 			x = cross_over(x)
