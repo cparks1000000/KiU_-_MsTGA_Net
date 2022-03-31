@@ -29,6 +29,9 @@ class CELoss(nn.Module):
 
     def forward(self, prediction: Tensor, label: Tensor) -> Tensor:
         # For some reason, NLLLoss has a negative sign...
+        # changed: removed channels dimension from label, then converted label back to LongTensor type
+        label: Tensor = torch.squeeze(label)
+        label: Tensor = label.type(torch.LongTensor)
         return -self.negative_cropped_log(-self._loss(self._softmax(prediction), label))
 
     # In general, any continuous function, defined piecewise, can be rewritten to be
@@ -36,7 +39,7 @@ class CELoss(nn.Module):
     def negative_cropped_log(self, inputs: Tensor) -> Tensor:
         """<latex>Returns $-ln(x)$ if $x > e^{-10}$ and $11-x/e^{-10}$ otherwise.</latex>"""
         # noinspection PyTypeChecker
-        cutoff = torch.exp(-10*ones_like(inputs))
+        cutoff = torch.exp(-10 * ones_like(inputs))
         lower = torch.min(cutoff, inputs)
         upper = torch.max(cutoff, inputs)
         return 1-lower/cutoff - torch.log(upper)
