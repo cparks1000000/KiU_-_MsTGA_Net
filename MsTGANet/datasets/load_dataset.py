@@ -10,12 +10,12 @@ from datasets.base_dataset import BaseDataset
 
 
 class LoadDataset(BaseDataset):
-    def __init__(self, images: str, labels: str, transform: Optional[Callable[[Tensor], Tensor]] = None,
+    def __init__(self, images_path: str, labels_path: str, transform: Optional[Callable[[Tensor], Tensor]] = None,
                  label_transform: Optional[Callable[[Tensor], Tensor]] = None) -> None:
-        self._images = images
-        self._labels = labels
-        self._image_names = os.listdir(images)
-        self._label_names = os.listdir(labels)
+        self._images_path: str = images_path
+        self._labels_path: str = labels_path
+        self._image_names: list[str] = os.listdir(images_path)
+        self._label_names: list[str] = os.listdir(labels_path)
         self._transform: Optional[Callable[[Tensor], Tensor]] = transform
         self._label_transform: Optional[Callable[[Tensor], Tensor]] = label_transform
 
@@ -23,12 +23,12 @@ class LoadDataset(BaseDataset):
         return len(self._image_names)
 
     def __getitem__(self, index: int) -> (Tensor, Tensor):
-        image_path = os.path.join(self._images, self._image_names[index])
-        image = iio.imread(image_path)
-        label_path = os.path.join(self._images, self._label_names[index])
-        label = iio.imread(label_path)
+        image_path: str = os.path.join(self._images_path, self._image_names[index])
+        label_path: str = os.path.join(self._images_path, self._label_names[index])
+        image: Tensor = iio.imread(image_path)
+        label: Tensor = iio.imread(label_path)
         if self._transform:
-            image = self._transform(image)
+            image: Tensor = self._transform(image)
         if self._label_transform:
-            label = self._transform(label)
+            label: Tensor = self._transform(label)
         return image, label

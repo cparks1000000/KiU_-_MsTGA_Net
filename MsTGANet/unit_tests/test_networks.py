@@ -13,10 +13,14 @@ upsample_factory = DefaultUpsampleFactory()
 downsample_factory = DefaultDownsampleFactory()
 
 
+# to load custom dataset, input paths to where the image folder and labels folder are located
+# transforms ToTensor, not sure if necessary
 train_set: BaseDataset = LoadDataset('/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/unit_tests/data/dataset/train_set/images',
                                      '/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/unit_tests/data/dataset/train_set/labels',
                                      transform=ToTensor(), label_transform=ToTensor())
 
+# to load custom dataset, input paths to where the image folder and labels folder are located
+# transforms ToTensor, not sure if necessary
 test_set: BaseDataset = LoadDataset('/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/unit_tests/data/dataset/test_set/images',
                                      '/Users/juliabrixey/Desktop/Research/KiUNet-MsTGANet/MsTGANet/unit_tests/data/dataset/test_set/labels',
                                      transform=ToTensor(), label_transform=ToTensor())
