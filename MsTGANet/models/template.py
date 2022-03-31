@@ -16,6 +16,7 @@ from MsTGANet.util.utils import copy_module_list, reverse
 class Template(BaseModel):
     # noinspection PyDefaultArgument
     def __init__(self,
+                 name: str,
                  channels_in: int,
                  height: int,
                  width: int,
@@ -24,7 +25,7 @@ class Template(BaseModel):
                  decoder_sampling: SamplingFactory = DefaultUpsampleFactory(),
                  *,
                  channels_list: List[int] = [32, 64, 128, 256, 512]) -> None:
-        super().__init__("delete_me")
+        super().__init__(name)
         print("================ MsTGANet ================")
 
         # changed: implemented initial_block in forward

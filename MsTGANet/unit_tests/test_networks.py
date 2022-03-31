@@ -3,7 +3,7 @@ from __future__ import annotations
 from torchvision.transforms import Compose, ToTensor
 
 from MsTGANet.modules.sampling_factory import DefaultUpsampleFactory, DefaultDownsampleFactory
-from MsTGANet.networks.template_network import UNetwork, KiNetwork
+from MsTGANet.networks.template_network import UNetwork, KiNetwork, MergerNetwork
 from MsTGANet.options.base_options import BaseOptions
 from MsTGANet.datasets.base_dataset import BaseDataset
 from datasets.dataset_wrapper import DatasetWrapper
@@ -34,5 +34,10 @@ def test_ki_network() -> None:
     network.do_train()
 
 
+def test_merger() -> None:
+    network = MergerNetwork(opt, test_set, train_set)
+    network.do_train()
+
+
 if __name__ == "__main__":
-    test_u_network()
+    test_merger()

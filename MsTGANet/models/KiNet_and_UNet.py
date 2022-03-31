@@ -13,7 +13,7 @@ class KiNet(Template, BaseModel):
     def __init__(self, channels_in: int, height: int, width: int, number_of_classes: int, *,
                  channels_list: List[int] = [32, 64, 128, 256, 512]):
         Template.__init__(
-            self, channels_in, height, width, number_of_classes,
+            self, "deleteki", channels_in, height, width, number_of_classes,
             encoder_sampling=upsample_factory,
             decoder_sampling=downsample_factory,
             channels_list=channels_list,
@@ -26,7 +26,7 @@ class UNet(Template, BaseModel):
     def __init__(self, channels_in: int, height: int, width: int, number_of_classes: int, *,
                  channels_list: List[int] = [32, 64, 128, 256, 512]):
         Template.__init__(
-            self, channels_in, height, width, number_of_classes,
+            self, "deleteu", channels_in, height, width, number_of_classes,
             encoder_sampling=downsample_factory,
             decoder_sampling=upsample_factory,
             channels_list=channels_list,
