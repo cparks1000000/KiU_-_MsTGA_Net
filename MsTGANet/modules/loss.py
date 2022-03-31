@@ -45,6 +45,7 @@ class CELoss(nn.Module):
 class MergerLoss(nn.Module):
     def __init__(self) -> None:
         super().__init__()
+        # changed: switched CrossEntropyLoss() with CELoss()
         self._cross_entropy = CELoss()
         self._dice = DiceLoss()
 
