@@ -12,7 +12,6 @@ from modules.attention.attention_encoder import AttentionEncoder
 class Attention(nn.Module):
     # noinspection PyDefaultArgument
     def __init__(self, channels_list: List[int], height: int, width: int, skip_modules: ModuleList, sampling_factory: SamplingFactory):
-        print("============= MsTNL =============")
         super().__init__()
         self._skip_modules = skip_modules
         self._encoder = AttentionEncoder(channels_list[-1], channels_list[:-1], height, width, sampling_factory)

@@ -2,7 +2,6 @@ import os
 from typing import Optional, Callable
 
 from torch import Tensor
-from torchvision.io import read_image
 
 import imageio as iio
 
