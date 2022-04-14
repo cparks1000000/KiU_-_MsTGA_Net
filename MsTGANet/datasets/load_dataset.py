@@ -3,7 +3,7 @@ from typing import Optional, Callable
 
 from torch import Tensor
 
-import imageio as iio
+import imageio
 
 from datasets.base_dataset import BaseDataset
 
@@ -24,8 +24,8 @@ class LoadDataset(BaseDataset):
     def __getitem__(self, index: int) -> (Tensor, Tensor):
         image_path: str = os.path.join(self._images_path, self._image_names[index])
         label_path: str = os.path.join(self._images_path, self._label_names[index])
-        image: Tensor = iio.imread(image_path)
-        label: Tensor = iio.imread(label_path)
+        image: Tensor = imageio.imread(image_path)
+        label: Tensor = imageio.imread(label_path)
         if self._transform:
             image: Tensor = self._transform(image)
         if self._label_transform:

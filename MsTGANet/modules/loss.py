@@ -16,6 +16,7 @@ class DiceLoss(nn.Module):
         entries_in_labels = reduce(lambda x, y: x*y, labels.size())
 
         intersection = self._nll(inputs, labels).sum()
+        # todo: The following is wrong. The 'entries_in_labels' term should be replaced with a count that does not include the background.
         dice = (2. * intersection + smoothing_factor) / (inputs.sum() + entries_in_labels + smoothing_factor)
 
         return 1 - dice
